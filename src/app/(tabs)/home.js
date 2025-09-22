@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router'
 import Topo from '../../components/Topo'
 import { ScrollView } from 'react-native-web'
 import Parceiros from "../../components/Parceiros";
+import CategoriaCarrossel from "../../components/CardapioHome"
 
 
 export default function Login() {
@@ -33,10 +34,16 @@ export default function Login() {
 
                 </View>
 
+
+
                 <View>
-                  <Parceiros/>
+                    <CategoriaCarrossel/>
                 </View>
 
+
+                <View>
+                    <Parceiros />
+                </View>
 
 
 
