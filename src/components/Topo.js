@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     position: "fixed",
     flex:1,
-    zIndex:1000
+    zIndex:1000,
+   
 
    
   },

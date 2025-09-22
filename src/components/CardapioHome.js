@@ -8,7 +8,10 @@ import {
   Dimensions,
 } from "react-native";
 
+const screenWidth = Dimensions.get('window').width;
+
 export default function CategoriaCarrossel() {
+ 
   const categories = [
     { id: "1", name: "Pratos Feitos", image: require("../../assets/img/pratos_feitos.png") },
     { id: "2", name: "Porções", image: require("../../assets/img/porcoes.png") },
@@ -21,7 +24,15 @@ export default function CategoriaCarrossel() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>CATEGORIAS</Text>
+    
+
+
+ <View style={styles.titleWrapper}>
+  <View style={styles.linha} />
+  <Text style={styles.title}>CARDÁPIO</Text>
+  <View style={styles.linha} />
+</View>
+
 
       <View style={styles.carouselContainer}>
         <ScrollView
@@ -57,16 +68,35 @@ const styles = StyleSheet.create({
     marginTop: 50,
     alignItems: "center",
   },
+
+  titleWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: screenWidth * 0.95,
+    marginVertical: 20,
+    marginBottom: 40,
+  },
+
+  linha: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#000000ff',
+    marginHorizontal: 7,
+  },
+
   title: {
-    color: "#3B7798",
-    fontStyle: "italic",
-    textShadowColor: "#528aa8",
+    fontSize: screenWidth * 0.05, 
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+    color: '#3B7798',
+    textShadowColor: '#528aa8',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
-    textAlign: "center",
-    marginBottom: 30,
-    fontSize: 24,
+    letterSpacing: screenWidth * 0.02, 
+    marginHorizontal: 10,
   },
+
   carouselContainer: {
     maxWidth: 400,
     width: "100%",
@@ -81,14 +111,17 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 2,
     borderColor: "#8F2929",
-    marginHorizontal: 16,
+    marginHorizontal: 17,
     padding: 10,
     backgroundColor: "#5c1212",
+   
   },
+  
   cardContent: {
     alignItems: "center",
   justifyContent: "center", 
   },
+
   image: {
     width: 70,
     height: 70,

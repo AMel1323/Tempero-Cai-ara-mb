@@ -4,6 +4,8 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo'
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 
 export default function RootLayout() {
     return(
@@ -55,10 +57,37 @@ export default function RootLayout() {
     }}
   />
 
-  
+  <Tabs.Screen
+    name="parceiros"
+    options={{
+     
+      tabBarIcon: ({ color }) => (
+        <FontAwesome name="handshake-o" size={25} color={color} style={{ marginTop: 15 }}/>
+      ),
+    }}
+  />
+
+  <Tabs.Screen
+    name="carrinho"
+    options={{
+     
+      tabBarIcon: ({ color }) => (
+        <Ionicons name="cart-outline" size={25} color={color} style={{ marginTop: 15 }}/>
+      ),
+    }}
+  />
+
+  <Tabs.Screen
+    name="editPerfil"
+    options={{
+     
+      tabBarIcon: ({ color }) => (
+        <Ionicons name="person-outline" size={25} color={color} style={{ marginTop: 15 }}/>
+      ),
+    }}
+  />
+
  
-
-
 
 </Tabs>
 

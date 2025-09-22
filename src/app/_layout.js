@@ -10,7 +10,7 @@ export default function Layout() {
             />
              <Stack.Screen   
                 name="login"
-                options={{ title: "Login" }}
+                options={{ headerShown: false }}
             />
              <Stack.Screen   
                 name="cadastrar"

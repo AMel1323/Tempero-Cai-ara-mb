@@ -5,6 +5,7 @@ import ParceiroC from "../../assets/img/quiosque1.png";
 import ParceiroM from "../../assets/img/quiosque2.png";
 import ParceiroA from "../../assets/img/quiosque3.png";
 import ParceiroI from "../../assets/img/quiosque4.png";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function Parceiros() {
   const parceiros = [
@@ -27,15 +28,20 @@ export default function Parceiros() {
           {parceiros.map((p) => (
             <TouchableOpacity key={p.id} onPress={() => console.log(p.nome)}>
               <View style={styles.parceiro}>
-                <View style={styles.verificado}>
-                  {/* Aqui você pode colocar um ícone de verificado */}
+
+                 <View style={styles.verificado}>
+                  <MaterialIcons name="verified" size={15} color="#2e8ec9" />
                 </View>
+               
                 <View style={styles.parceirotext_img}>
                   <Image source={p.img} style={styles.img_quiosque} />
+                  
                   <Text style={styles.parceiroNome}>
                     {p.nome}{" "}
+                    
                     <Text style={styles.span_parceiros}>{p.tipo}</Text>
                   </Text>
+                  
                 </View>
               </View>
             </TouchableOpacity>
@@ -48,7 +54,7 @@ export default function Parceiros() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    marginTop: 60,
     alignItems: "center",
   },
   title: {
@@ -59,7 +65,9 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
     textAlign: "center",
     marginBottom: 30,
-    fontSize: 24,
+    fontSize: 18,
+    letterSpacing: 0.5,
+    fontWeight: 500
   },
   carouselContainer: {
     maxWidth: 400,       // limite de largura total do carrossel
@@ -74,13 +82,16 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 2,
     borderColor: "#8F2929",
-    marginHorizontal: 5,
+    marginHorizontal: 16,
     padding: 10,
     backgroundColor: "#fff",
+    
   },
   verificado: {
-    marginBottom: 10,
+    marginBottom: 2,
+    alignSelf: 'flex-start',
     alignItems: "center",
+
   },
   parceirotext_img: {
     flexDirection: "row",
@@ -96,6 +107,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#953636",
     flexShrink: 1,
+    fontWeight: 600
   },
   span_parceiros: {
     fontSize: 12,

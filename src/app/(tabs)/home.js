@@ -5,6 +5,8 @@ import Topo from '../../components/Topo'
 import { ScrollView } from 'react-native-web'
 import Parceiros from "../../components/Parceiros";
 import CategoriaCarrossel from "../../components/CardapioHome"
+import Rodape from "../../components/Ropape";
+
 
 
 export default function Login() {
@@ -45,6 +47,17 @@ export default function Login() {
                     <Parceiros />
                 </View>
 
+                <View style={styles.bannerPublicitario}>
+                    <Image
+                        style={styles.image_publicitario}
+                        source={require('../../../assets/img/pequeno_banner.png')}
+                    />
+                </View>
+
+
+                <View>
+                    <Rodape />
+                </View>
 
 
             </View>
@@ -68,13 +81,24 @@ const styles = StyleSheet.create({
 
     image_banner: { 
         width: 400, 
-        height: 100
+        height: 120
       },
 
       banner:{
         alignItems: "center",
         gap: 10
       },
+
+      image_publicitario:{
+        width: 337, 
+        height: 154.37
+      },
+
+      bannerPublicitario: {
+        alignItems: "center",
+        gap: 10,
+        marginTop: 40
+      }
 
 
 

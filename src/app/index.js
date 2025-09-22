@@ -30,12 +30,14 @@ export default function LoginScreen() {
       {/* Botões */}
       <TouchableOpacity style={styles.button} 
       title='Cadastro'
-       onPress={() => router.navigate('/home')}>
+       onPress={() => router.navigate('login')}>
 
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button}
+       title='Cadastro'
+       onPress={() => router.navigate('/home')}>
         <Text style={styles.buttonText}>Cadastre-se</Text>
       </TouchableOpacity>
     </LinearGradient>
