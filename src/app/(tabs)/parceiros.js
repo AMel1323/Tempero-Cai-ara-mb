@@ -38,14 +38,19 @@ export default function Login() {
                 </View>
 
                 <View style={styles.star_km}>
-                <AntDesign name="star" size={24} color="black" />
-                <Text style={styles.avaliação}>4,5</Text>
+               
+                <AntDesign name="star" size={18} color="#F8AF22" style={{
+                    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                    textShadowOffset: { width: 1, height: 1 },
+                    textShadowRadius: 1,
+                }} />
+                <Text style={styles.avaliacao}> 4,5</Text>
                   <Text>° 1,5km</Text>
                 </View>
 
                 <View style={styles.horario}>
-                <Ionicons name="storefront-outline" size={24} color="black" />
-                   <Text style={styles.open}> ° Aberto</Text>
+               
+                   <Text style={styles.open}>  <Ionicons name="storefront-outline" size={20} color="#3B7798" /> ° Aberto</Text>
                    <Text style={styles.infohorario}>Abre as 09hrs e fecha ás 21hrs - todos os dias</Text>
 
                 </View>
@@ -98,6 +103,74 @@ const styles = StyleSheet.create({
    
         
       },
+
+      infoQuiosque:{
+        backgroundColor: "#ACC1CD",
+        top: -60,
+        borderRadius:20,
+        padding: 15,
+
+
+      },
+
+      namequiosque:{
+        marginTop:20,
+        display: "flex",
+        justifyContent: "center",
+      },
+
+      title:{
+        textAlign: "center",
+        fontSize: 19,
+        fontWeight: 600,
+      },
+
+      subtitle:{
+        textAlign: "center",
+        fontSize: 12,
+        marginBottom:3,
+      },
+
+      star_km:{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "row",
+        marginBottom: 8,
+        
+      },
+
+      avaliacao:{
+        color: "#F8AF22",
+        marginRight: 5,
+        fontWeight: 500,
+        textShadowColor: 'rgba(0, 0, 0, 0.75)', 
+        textShadowOffset: { width: 1, height: 1 }, 
+        textShadowRadius: 1, 
+      },
+
+      horario:{
+        backgroundColor: "#FBF6F6",
+        display: "flex",
+        justifyContent: "center",
+        padding: 8,
+        borderRadius:10,
+        borderWidth: 1,           
+        borderColor: 'black',
+       
+      },
+
+      open:{
+        display: "flex",
+        alignItems: "center",
+        color: "#00B200",
+        fontWeight: 630,
+      },
+
+      infohorario:{
+        fontSize: 10,
+        fontWeight: 500
+      }
 
 
 
