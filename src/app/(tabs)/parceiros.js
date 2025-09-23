@@ -5,6 +5,7 @@ import Topo from '../../components/Topo'
 import { ScrollView } from 'react-native-web'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Carrossel from '../../components/CarroselParceiro'
 
 
 export default function Login() {
@@ -55,6 +56,10 @@ export default function Login() {
 
                 </View>
 
+            </View>
+
+            <View>
+                <Carrossel />
             </View>
 
 

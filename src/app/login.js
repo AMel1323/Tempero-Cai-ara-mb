@@ -12,7 +12,7 @@ export default function Login() {
   return (
 
     <LinearGradient
-          colors={["#947A0D", "#C7A000"]} // azul topo → azul escuro embaixo
+          colors={["rgb(219, 213, 183)", "rgb(202, 176, 57)"]} // azul topo → azul escuro embaixo
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.container}
@@ -109,18 +109,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     marginTop: 20,
-    color: "#FFFFFF",
+    color: "#fff",
     fontStyle: "italic",
     textAlign: "center",
     textShadowColor: "#303030ff",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
     opacity: 0.8,
+    letterSpacing: 0.2,
   },
   label: {
     fontSize: 15,
     marginBottom: 5,
-    color: "#8F2929",
+    color: "#296D8C",
     fontWeight: 700,
   },
   input: {
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
 
 
   loginButton: {
-    backgroundColor: "#8F2929",
+    backgroundColor: "#296D8C",
     padding: 10,
     borderRadius: 20,
     alignItems: "center",
