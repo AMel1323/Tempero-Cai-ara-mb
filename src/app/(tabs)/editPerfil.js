@@ -220,4 +220,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6, // se não tiver suporte, tira e usa marginLeft no ícone
   },
-});
+}); 

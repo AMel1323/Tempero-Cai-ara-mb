@@ -62,6 +62,9 @@ export default function Login() {
                 <Carrossel />
             </View>
 
+                <View style={styles.margin}>
+
+                </View>
 
         </View>
         </ScrollView>
@@ -72,6 +75,7 @@ const styles = StyleSheet.create({
 
     tela: {
         flex: 1,
+        backgroundColor:"#fff"
 
     },
 
@@ -175,7 +179,11 @@ const styles = StyleSheet.create({
       infohorario:{
         fontSize: 10,
         fontWeight: 500
-      }
+      },
+
+      margin:{
+        marginBottom:200
+      },
 
 
 

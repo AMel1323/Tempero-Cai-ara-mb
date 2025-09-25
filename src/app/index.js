@@ -37,7 +37,7 @@ export default function LoginScreen() {
 
       <TouchableOpacity style={styles.button}
        title='Cadastro'
-       onPress={() => router.navigate('/home')}>
+       onPress={() => router.navigate('/cadastrar')}>
         <Text style={styles.buttonText}>Cadastre-se</Text>
       </TouchableOpacity>
     </LinearGradient>

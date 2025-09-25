@@ -4,10 +4,9 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { BlurView } from 'expo-blur';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-export default function Login() {
+
+export default function Localizacao() {
   const router = useRouter();
 
   return (
@@ -18,7 +17,7 @@ export default function Login() {
   
        {/* Top azul */}
        <View style={styles.topBackground}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}>Localização</Text>
 
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back-outline" size={24} color="#fff" />
@@ -29,39 +28,55 @@ export default function Login() {
         <View style={styles.circle} ></View>
 
       </View>
-
-        
-     
-
+   
       {/* Formulário amarelo */}
       <View style={styles.bottomSection}>
         <BlurView intensity={100} style={styles.blur} tint="light" />
 
-        <Text style={styles.label}>Entre com seu e-mail:<FontAwesome name="envelope" size={15} color="#C3A31B" style={{
+
+        <Text style={styles.label}>Bairro:<Entypo name="location" size={15} color="#C3A31B" style={{
                     textShadowColor: 'rgba(207, 199, 199, 0.75)',
                     textShadowOffset: { width: 1, height: 1 },
                     textShadowRadius: 1,
                     marginLeft: 6
-                }} ></FontAwesome></Text>
+                }} ></Entypo></Text>
   
-        <TextInput style={styles.input}  placeholder="Digite o seu e-mail:" />
+        <TextInput style={styles.input}  placeholder="Digite o Bairro:" />
+
+        <Text style={styles.label}>Digite o seu endereço::<Entypo name="location" size={15} color="#C3A31B" style={{
+                    textShadowColor: 'rgba(207, 199, 199, 0.75)',
+                    textShadowOffset: { width: 1, height: 1 },
+                    textShadowRadius: 1,
+                    marginLeft: 6
+                }} ></Entypo></Text>
+  
+        <TextInput style={styles.input}  placeholder="Digite o nome da sua Rua:" />
       
 
-        <Text style={styles.label}>Senha:<FontAwesome5 name="lock" size={15} color="#C3A31B" style={{
+        <Text style={styles.label}>Número da residência:<Entypo name="location" size={15} color="#C3A31B" style={{
                     textShadowColor: 'rgba(207, 199, 199, 0.75)',
                     textShadowOffset: { width: 1, height: 1 },
                     textShadowRadius: 1,
                     marginLeft: 6
-                }} /> </Text>
-        <TextInput style={styles.input} placeholder="Digite sua senha:" secureTextEntry />
+                }} /></Text>
+        <TextInput style={styles.input} placeholder="Exemplo: Casa 108" secureTextEntry />
+
+
+           <View style={styles.img}>
+                            <Image
+                                style={styles.image}
+                                source={require('../../assets/img/manCadastro.png')}
+                            />
+                        </View>
+        
 
         <TouchableOpacity style={styles.loginButton} onPress={() => router.push("/home")}>
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={styles.loginText}>Finalizar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push("/cadastrar")}>
+        <TouchableOpacity onPress={() => router.push("/login")}>
           <Text style={styles.signupText}>
-            Não tem uma conta? <Text style={{ fontWeight: "bold", color: "#8F2929"  }}>Cadastre-se</Text>
+          Já tem uma conta? <Text style={{ fontWeight: "bold", color: "#8F2929"  }}>Faça Login</Text>
           </Text>
         </TouchableOpacity>
 
@@ -73,8 +88,6 @@ export default function Login() {
           <Ionicons name="logo-whatsapp" size={20} color="#8F2929" />
         </View>
 
-          {/* Bolinha amarela */}
-          <View style={styles.circleBottom} ></View>
 
         <Text style={styles.termos}>Ao entrar, você concorda com nossos Termos de{"\n"}Uso e Política de Privacidade.</Text>
 
@@ -236,23 +249,17 @@ const styles = StyleSheet.create({
 
 
   },
-
-  circleBottom: {
+  
+  image: { 
+    top: -150,
+    width: "100%", 
+    marginLeft: -53,
+    height: 340,
+    zIndex:-10,
     position: "absolute",
-    left: -50,   
-    bottom: 12, 
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#C3A31B",
-     // sombra centralizada
-     shadowColor: "#000",
-     shadowOffset: { width: 1, height: 1 },
-     shadowOpacity: 0.3,
-     shadowRadius: 10,
-     elevation: 10, // necessário no Android
-    
+    opacity: 0.5
   },
+
 
 
 

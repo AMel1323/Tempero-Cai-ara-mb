@@ -14,7 +14,11 @@ export default function Layout() {
             />
              <Stack.Screen   
                 name="cadastrar"
-                options={{ title: "Cadastrar" }}
+                options={{ headerShown: false  }}
+            />
+            <Stack.Screen   
+                name="cadastrofinal"
+                options={{ headerShown: false  }}
             />
             <Stack.Screen   
                 name="(tabs)"
