@@ -117,16 +117,16 @@ export default function EditProfile() {
       {/* Botões */}
       <View style={styles.buttons}>
         <TouchableOpacity style={[styles.btn, styles.exit]}>
-          <Text style={styles.btnText}>Sair<Ionicons name="exit-outline" size={20} color="#F1F1F1" /></Text>
+          <Text style={styles.btnText}>Sair<Ionicons name="exit-outline" size={15} color="#F1F1F1" /></Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.btn, styles.save]} onPress={handleSalvar}>
-          <Text style={styles.btnTextSalvar}>Salvar Alteração<Ionicons name="refresh-circle-outline" size={20} color="#8F2929" /></Text>
+          <Text style={styles.btnTextSalvar}>Salvar Alteração<Ionicons name="refresh-circle-outline" size={15} color="#8F2929" /></Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.btn, styles.delete]} onPress={handleExcluir}>
         <View style={styles.btnContent}>
-          <Text style={styles.btnText}>Excluir<Ionicons name="trash" size={18} color="#FFFFFF" /></Text>
+          <Text style={styles.btnText}>Excluir<Ionicons name="trash" size={15} color="#FFFFFF" /></Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -189,14 +189,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   btn: {
-    padding: 10,
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent:"center",
+    padding: 12,
+    borderRadius: 10, 
+     display: "flex",
+    alignItems: "center", 
+    gap: 2,
+    fontSize: 10,
+   
+   
   },
   exit: {
     backgroundColor: "#B5A36E",
+     
+    
   },
   save: {
     backgroundColor: "#D9D9D9",
@@ -207,6 +212,7 @@ const styles = StyleSheet.create({
   btnText: {
     color: "#fff",
     fontWeight: "bold",
+    
   },
 
   btnTextSalvar:{
@@ -215,9 +221,5 @@ const styles = StyleSheet.create({
   },
 
   // 👇 esse é o que faltava
-  btnContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6, // se não tiver suporte, tira e usa marginLeft no ícone
-  },
+ 
 }); 

@@ -27,7 +27,7 @@ export default function Carrossel() {
   const screenWidth = Dimensions.get("window").width;
 
   const scroll = (direction) => {
-    const maxScroll = cardWidth * produtos.length - screenWidth + 40;
+    const maxScroll = cardWidth * produtos.length - screenWidth + 20;
     let newX = direction === "left"
       ? Math.max(scrollX - cardWidth, 0)
       : Math.min(scrollX + cardWidth, maxScroll);
@@ -71,13 +71,16 @@ export default function Carrossel() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    marginTop: 8,
     alignItems: "center",
-    backgroundColor:"#FBF6F6"
+    backgroundColor: "#FBF6F6",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 10, 
   },
   title: {
     color: "black",
-    fontStyle: "italic",
+    marginTop:5,
     textAlign: "center",
     marginBottom: 22,
     fontSize: 18,
@@ -88,7 +91,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxWidth: 400,
     width: "100%",
-    marginBottom:20
+    marginBottom:2,
+    margin:5,
+    marginBottom: 20,
   },
   scrollView: {
     flexGrow: 0,
@@ -100,11 +105,11 @@ const styles = StyleSheet.create({
   card: {
     width: 160,
     borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#2e8ec9",
+   
+   
     marginHorizontal: 10,
     padding: 10,
-    backgroundColor: "#fff",
+   
     alignItems: "center",
   },
   img: {

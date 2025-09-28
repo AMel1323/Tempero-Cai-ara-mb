@@ -6,6 +6,7 @@ import { ScrollView } from 'react-native-web'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Carrossel from '../../components/CarroselParceiro'
+import Menu from '../../components/ComidasParceiro'
 
 
 export default function Login() {
@@ -60,6 +61,10 @@ export default function Login() {
 
             <View>
                 <Carrossel />
+            </View>
+
+            <View>
+                <Menu/>
             </View>
 
                 <View style={styles.margin}>
@@ -182,7 +187,7 @@ const styles = StyleSheet.create({
       },
 
       margin:{
-        marginBottom:200
+        marginBottom:100
       },
 
 
