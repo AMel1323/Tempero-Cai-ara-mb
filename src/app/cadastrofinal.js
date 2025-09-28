@@ -59,7 +59,7 @@ export default function Localizacao() {
                     textShadowRadius: 1,
                     marginLeft: 6
                 }} /></Text>
-        <TextInput style={styles.input} placeholder="Exemplo: Casa 108" secureTextEntry />
+        <TextInput style={styles.input} placeholder="Exemplo: Casa 108" />
 
 
            <View style={styles.img}>
@@ -255,9 +255,9 @@ const styles = StyleSheet.create({
     width: "100%", 
     marginLeft: -53,
     height: 340,
-    zIndex:-10,
+    zIndex:-50,
     position: "absolute",
-    opacity: 0.5
+    opacity: 0.4,
   },
 
 
