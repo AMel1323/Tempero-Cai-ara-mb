@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import { useRouter } from 'expo-router';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function CategoriaCarrossel() {
+  const router = useRouter();
  
   const categories = [
     { id: "1", name: "Pratos Feitos", image: require("../../assets/img/pratos_feitos.png") },
@@ -41,7 +43,7 @@ export default function CategoriaCarrossel() {
           contentContainerStyle={styles.scrollContent}
         >
           {categories.map((item) => (
-            <TouchableOpacity key={item.id} onPress={() => console.log(item.name)}>
+            <TouchableOpacity key={item.id} onPress={() => router.navigate('/camaraopage')}>
               <View style={styles.card}>
                 <View style={styles.cardContent}>
                   <Image
@@ -62,6 +64,8 @@ export default function CategoriaCarrossel() {
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
