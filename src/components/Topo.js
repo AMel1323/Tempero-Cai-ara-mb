@@ -1,16 +1,24 @@
 import { Image } from "expo-image";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
+import { useRouter } from 'expo-router';
 
 export default function Topo() {
+
+  const router = useRouter()
+
   return (
     <View style={styles.header}>
+      <TouchableOpacity
+             title='home'
+             onPress={() => router.navigate('/home')}>
       <View style={styles.logotipo}>
         <Image
           style={styles.image}
           source={require("../../assets/img/logo.png")}
         />
       </View>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -29,7 +29,7 @@ export default function LoginScreen() {
 
       {/* Botões */}
       <TouchableOpacity style={styles.button} 
-      title='Cadastro'
+      title='Login'
        onPress={() => router.navigate('login')}>
 
         <Text style={styles.buttonText}>Login</Text>

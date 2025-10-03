@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { View, Text, Button, StyleSheet } from 'react-native'
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'
 import { useRouter } from 'expo-router'
 import Topo from '../../components/Topo'
 import { ScrollView } from 'react-native-web'
@@ -20,18 +20,32 @@ export default function Login() {
 
                 <Topo />
 
+              
                 <View style={styles.banner}>
+                    
                     <Image
                         style={styles.image_banner}
                         source={require('../../../assets/img/banner.png')}
                     />
+                   
                 </View>
+                
+            
 
 
 
                 <View style={styles.welcome}>
-
-
+                
+                <TouchableOpacity
+                                 title='Camarao'
+                                 onPress={() => router.navigate('/camaraopage')}>
+                <View style={styles.bannerPublicitario}>
+                    <Image
+                        style={styles.image_publicitario}
+                        source={require('../../../assets/img/bannerwelcome.png')}
+                    />
+                </View>
+                </TouchableOpacity>
 
 
                 </View>
@@ -47,12 +61,17 @@ export default function Login() {
                     <Parceiros />
                 </View>
 
+
+                <TouchableOpacity
+                                 title='Camarao'
+                                 onPress={() => router.navigate('/camaraopage')}>
                 <View style={styles.bannerPublicitario}>
                     <Image
                         style={styles.image_publicitario}
                         source={require('../../../assets/img/pequeno_banner.png')}
                     />
                 </View>
+                </TouchableOpacity>
 
 
                 <View>

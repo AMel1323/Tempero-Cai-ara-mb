@@ -24,6 +24,13 @@ export default function Layout() {
                 name="(tabs)"
                 options={{ headerShown: false }}
             />
+
+             <Stack.Screen   
+                name="modal"
+                options={{
+                    presentation: 'modal',
+                  }}
+                  />
         </Stack>
     )
 }

@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from 'expo-router';
 import { Image } from "expo-image";
 import Topo from "../../components/Topo";
 
@@ -19,34 +20,36 @@ const quiosques = [
   {
     id: 1,
     nome: "Quiosque Intermares",
-    logo: require("../../../assets/img/acai.png"),
+    logo: require("../../../assets/img/camaraopagelogo1.png"),
     avaliacao: 4.5,
     tempo: "50-60 MIN",
     entrega: "Grátis",
     produtos: [
-      { id: 1, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
-      { id: 2, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
-      { id: 3, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
-      { id: 4, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 1, img: require("../../../assets/img/camarao1.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 2, img: require("../../../assets/img/camarao2.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 3, img: require("../../../assets/img/camarao3.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 4, img: require("../../../assets/img/camarao4.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
     ],
   },
   {
     id: 2,
     nome: "Quiosque do Sol",
-    logo: require("../../../assets/img/acai.png"),
-    avaliacao: 4.5,
-    tempo: "50-60 MIN",
+    logo: require("../../../assets/img/camaraopagelogo2.png"),
+    avaliacao: 4.7,
+    tempo: "40-50 MIN",
     entrega: "Grátis",
     produtos: [
-      { id: 1, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
-      { id: 2, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
-      { id: 3, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
-      { id: 4, img: require("../../../assets/img/acai.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 1, img: require("../../../assets/img/camarao1.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 2, img: require("../../../assets/img/camarao2.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 3, img: require("../../../assets/img/camarao3.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
+      { id: 4, img: require("../../../assets/img/camarao4.png"), title: "Açaí no copo - 400ml", price: "R$ 25,00" },
     ],
   },
 ];
 
 export default function CamaraoPage() {
+  const router = useRouter()
+
   return (
     <ScrollView style={styles.container}>
       {/* Banner */}
@@ -87,6 +90,7 @@ function CardQuiosque({ data }) {
 
 
   return (
+    
     <View style={styles.quiosque}>
       <Topo />
       {/* Header Quiosque */}
@@ -114,7 +118,7 @@ function CardQuiosque({ data }) {
             <TouchableOpacity
               key={item.id}
               style={styles.carouselItem}
-              onPress={() => console.log("Abrir modal de:", item.title)}
+              onPress={() => router.navigate('/modal')} 
             >
               <Image source={item.img} style={styles.produtoImg} />
               <Text style={styles.produtoTitulo}>{item.title}</Text>
@@ -178,7 +182,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 22,
     paddingHorizontal: 30,
   },
   logo: {
