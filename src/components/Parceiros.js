@@ -6,8 +6,12 @@ import ParceiroM from "../../assets/img/quiosque2.png";
 import ParceiroA from "../../assets/img/quiosque3.png";
 import ParceiroI from "../../assets/img/quiosque4.png";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useRouter } from 'expo-router';
 
 export default function Parceiros() {
+
+  const router = useRouter()
+
   const parceiros = [
     { id: 1, nome: "Quiosque Canoa", tipo: "lanches", img: ParceiroC },
     { id: 2, nome: "Quiosque Mar a Vista", tipo: "lanches", img: ParceiroM },
@@ -26,7 +30,7 @@ export default function Parceiros() {
           contentContainerStyle={styles.scrollContent}
         >
           {parceiros.map((p) => (
-            <TouchableOpacity key={p.id} onPress={() => console.log(p.nome)}>
+            <TouchableOpacity key={p.id} onPress={() => router.navigate('/parceiros')}>
               <View style={styles.parceiro}>
 
                  <View style={styles.verificado}>
