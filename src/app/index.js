@@ -1,43 +1,66 @@
-import {Image} from 'expo-image'
-
-import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from 'expo-router';
-
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-     const router = useRouter()
+  useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const logged = await AsyncStorage.getItem("logado");
+        if (logged === "true") {
+          router.replace("/home"); // já logado → vai direto pra home
+        }
+      } catch (error) {
+        console.log("Erro ao verificar login:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-     return (
+    checkLogin();
+  }, []);
 
-   
+  if (loading) {
+    // Tela de carregamento enquanto verifica login
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#C3A31B" />
+      </View>
+    );
+  }
+
+  return (
     <LinearGradient
-      colors={["#236F92", "#0E3547"]} // azul topo → azul escuro embaixo
+      colors={["#236F92", "#0E3547"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
       {/* Logo */}
       <View style={styles.logoContainer}>
-        <Image
-            style={styles.image}
-            source={require('../../assets/img/logo.png')}
-        />
-       
+        <Image style={styles.image} source={require("../../assets/img/logo.png")} />
       </View>
 
       {/* Botões */}
-      <TouchableOpacity style={styles.button} 
-      title='Login'
-       onPress={() => router.navigate('login')}>
-
+      <TouchableOpacity
+        style={styles.button}
+        title="Login"
+        onPress={() => router.navigate("/login")}
+      >
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button}
-       title='Cadastro'
-       onPress={() => router.navigate('/cadastrar')}>
+      <TouchableOpacity
+        style={styles.button}
+        title="Cadastro"
+        onPress={() => router.navigate("/cadastrar")}
+      >
         <Text style={styles.buttonText}>Cadastre-se</Text>
       </TouchableOpacity>
     </LinearGradient>
@@ -45,6 +68,12 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#0E3547",
+  },
   container: {
     flex: 1,
     justifyContent: "center",
@@ -54,12 +83,10 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     alignItems: "center",
   },
-
-   image: { 
-    width: 250, 
+  image: {
+    width: 250,
     height: 100,
   },
-  
   button: {
     backgroundColor: "#e0e0e0",
     width: "80%",

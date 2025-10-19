@@ -1,92 +1,146 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { Image } from "expo-image";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, Entypo } from "@expo/vector-icons";
-import { BlurView } from 'expo-blur';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { BlurView } from "expo-blur";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+
+  // Função para fazer login
+  const handleLogin = async () => {
+    if (!email || !pass) {
+      Alert.alert("Atenção", "Preencha todos os campos!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3333/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, pass }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert("Erro", data.error || "Falha no login");
+        return;
+      }
+
+      // Login bem-sucedido → salva no AsyncStorage
+      await AsyncStorage.setItem("logado", "true");
+      await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
+      Alert.alert("Sucesso", "Login realizado com sucesso!");
+
+      // Redireciona para a página inicial
+      router.replace("/home");
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      Alert.alert("Erro", "Não foi possível conectar ao servidor.");
+    }
+  };
 
   return (
-
-
     <View style={styles.container}>
-
-  
-       {/* Top azul */}
-       <View style={styles.topBackground}>
+      {/* Top azul */}
+      <View style={styles.topBackground}>
         <Text style={styles.title}>Login</Text>
 
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back-outline" size={24} color="#fff" />
         </TouchableOpacity>
 
-
         {/* Bolinha amarela */}
-        <View style={styles.circle} ></View>
-
+        <View style={styles.circle}></View>
       </View>
 
-        
-     
-
-      {/* Formulário amarelo */}
+      {/* Formulário */}
       <View style={styles.bottomSection}>
         <BlurView intensity={100} style={styles.blur} tint="light" />
 
-        <Text style={styles.label}>Entre com seu e-mail:<FontAwesome name="envelope" size={15} color="#C3A31B" style={{
-                    textShadowColor: 'rgba(207, 199, 199, 0.75)',
-                    textShadowOffset: { width: 1, height: 1 },
-                    textShadowRadius: 1,
-                    marginLeft: 6
-                }} ></FontAwesome></Text>
-  
-        <TextInput style={styles.input}  placeholder="Digite o seu e-mail:" />
-      
+        <Text style={styles.label}>
+          Entre com seu e-mail:
+          <FontAwesome
+            name="envelope"
+            size={15}
+            color="#C3A31B"
+            style={{
+              textShadowColor: "rgba(207, 199, 199, 0.75)",
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 1,
+              marginLeft: 6,
+            }}
+          />
+        </Text>
 
-        <Text style={styles.label}>Senha:<FontAwesome5 name="lock" size={15} color="#C3A31B" style={{
-                    textShadowColor: 'rgba(207, 199, 199, 0.75)',
-                    textShadowOffset: { width: 1, height: 1 },
-                    textShadowRadius: 1,
-                    marginLeft: 6
-                }} /> </Text>
-        <TextInput style={styles.input} placeholder="Digite sua senha:" secureTextEntry />
+        <TextInput
+          style={styles.input}
+          placeholder="Digite o seu e-mail:"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+        />
 
-        <TouchableOpacity style={styles.loginButton} onPress={() => router.push("/home")}>
+        <Text style={styles.label}>
+          Senha:
+          <FontAwesome5
+            name="lock"
+            size={15}
+            color="#C3A31B"
+            style={{
+              textShadowColor: "rgba(207, 199, 199, 0.75)",
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 1,
+              marginLeft: 6,
+            }}
+          />
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Digite sua senha:"
+          secureTextEntry
+          value={pass}
+          onChangeText={setPass}
+        />
+
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push("/cadastrar")}>
           <Text style={styles.signupText}>
-            Não tem uma conta? <Text style={{ fontWeight: "bold", color: "#8F2929"  }}>Cadastre-se</Text>
+            Não tem uma conta?{" "}
+            <Text style={{ fontWeight: "bold", color: "#8F2929" }}>Cadastre-se</Text>
           </Text>
         </TouchableOpacity>
 
-         <View style={styles.line} />
+        <View style={styles.line} />
 
         {/* Ícones sociais */}
-        <View style={styles.socialIcons} >
+        <View style={styles.socialIcons}>
           <Entypo name="instagram" size={20} color="#8F2929" />
           <Ionicons name="logo-whatsapp" size={20} color="#8F2929" />
         </View>
 
-          {/* Bolinha amarela */}
-          <View style={styles.circleBottom} ></View>
+        {/* Bolinha amarela */}
+        <View style={styles.circleBottom}></View>
 
-        <Text style={styles.termos}>Ao entrar, você concorda com nossos Termos de{"\n"}Uso e Política de Privacidade.</Text>
-
-
-       
+        <Text style={styles.termos}>
+          Ao entrar, você concorda com nossos Termos de{"\n"}Uso e Política de Privacidade.
+        </Text>
       </View>
-
     </View>
-   
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {

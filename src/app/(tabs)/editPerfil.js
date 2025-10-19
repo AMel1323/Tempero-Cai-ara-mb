@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,149 +6,230 @@ import {
   TouchableOpacity,
   StyleSheet,
   Picker,
+  Alert,
 } from "react-native";
-import { ScrollView } from 'react-native-web'
+import { ScrollView } from "react-native-web";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
-
-import Topo from '../../components/Topo'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Feather from '@expo/vector-icons/Feather';
-import Ionicons from '@expo/vector-icons/Ionicons';
-
+import Topo from "../../components/Topo";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Feather from "@expo/vector-icons/Feather";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function EditProfile() {
-  // estados que futuramente vão receber dados do banco
-  const [nome, setNome] = useState("User");
-  const [email, setEmail] = useState("user@gmail.com");
-  const [senha, setSenha] = useState("123456");
-  const [endereco, setEndereco] = useState("Rua exemplo, 123");
+  const router = useRouter();
+
+  const [userId, setUserId] = useState(null);
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
   const [pagamento, setPagamento] = useState("Débito");
 
-  const handleSalvar = () => {
-    // aqui vai sua integração com o backend
-    console.log({ nome, email, senha, endereco, pagamento });
+  // usuário logado
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        if (!userData) return;
+        const parsed = JSON.parse(userData);
+        setUserId(parsed.id);
+
+        // Buscar dados atuais do banco
+        const response = await fetch(`http://localhost:3333/user/${parsed.id}`);
+        if (!response.ok) throw new Error("Erro ao carregar usuário");
+        const data = await response.json();
+
+        setNome(data.name || "");
+        setEmail(data.email || "");
+        setSenha(data.pass || "");
+        setBairro(data.bairro || "");
+        setRua(data.rua || "");
+        setNumero(data.numero || "");
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+        Alert.alert("Erro", "Não foi possível carregar seus dados.");
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  // Atualizar usuário
+  const handleSalvar = async () => {
+    try {
+      const response = await fetch(`http://localhost:3333/user/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nome,
+          email,
+          pass: senha,
+          bairro,
+          rua,
+          numero,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Erro ao atualizar usuário");
+      Alert.alert("Sucesso", "Dados atualizados com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+      Alert.alert("Erro", "Não foi possível salvar as alterações.");
+    }
   };
 
-  const handleExcluir = () => {
-    // integração futura
-    console.log("Conta excluída");
+  // Excluir usuário
+  const handleExcluir = async () => {
+    Alert.alert("Confirmação", "Tem certeza que deseja excluir sua conta?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Excluir",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await fetch(`http://localhost:3333/user/${userId}`, {
+              method: "DELETE",
+            });
+            await AsyncStorage.removeItem("user");
+            router.replace("/login");
+          } catch (error) {
+            console.error("Erro ao excluir:", error);
+            Alert.alert("Erro", "Não foi possível excluir sua conta.");
+          }
+        },
+      },
+    ]);
+  };
+
+  // Logout
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("user");
+      router.replace("/login");
+    } catch (error) {
+      console.log("Erro ao fazer logout:", error);
+    }
   };
 
   return (
-
     <ScrollView style={styles.tela}>
+      <Topo />
 
-     <Topo />
-    
-    <View style={styles.container}>
-    
-   
+      <View style={styles.container}>
+        <Text style={styles.hello}>
+          Olá, {nome || "Usuário"}{" "}
+          <MaterialCommunityIcons name="bell" size={22} color="#7A1E1E" />
+        </Text>
+        <Text style={styles.title}>Alterações:</Text>
 
-      <Text style={styles.hello}>Olá, {nome} <MaterialCommunityIcons name="bell" size={22} color="#7A1E1E" /></Text>
-      <Text style={styles.title}>Alterações:</Text>
+        {/* Nome */}
+        <Text style={styles.label}>
+          Nome:
+          <Feather name="edit" size={15} color="#48742C" style={styles.icon} />
+        </Text>
+        <TextInput
+          style={styles.input}
+          value={nome}
+          onChangeText={setNome}
+          placeholder="Digite o seu nome"
+        />
 
-      {/* Nome */}
-      <Text style={styles.label}>Nome:<Feather name="edit" size={15} color="#48742C" style={{
-                    textShadowColor: 'rgba(133, 133, 133, 0.75)',
-                    textShadowOffset: { width: 1, height: 1 },
-                    textShadowRadius: 1,
-                    marginLeft: 6
-                }}  /></Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Digite o seu user"
-        value={nome}
-        onChangeText={setNome}
-      />
+        {/* Email */}
+        <Text style={styles.label}>
+          E-mail:
+          <Feather name="edit" size={15} color="#48742C" style={styles.icon} />
+        </Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          placeholder="Digite seu e-mail"
+        />
 
-      {/* Email */}
-      <Text style={styles.label}>E-mail: <Feather name="edit" size={15} color="#48742C" style={{
-                    textShadowColor: 'rgba(133, 133, 133, 0.75)',
-                    textShadowOffset: { width: 1, height: 1 },
-                    textShadowRadius: 1,
-                    marginLeft: 6
-                }}  /></Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Exemplo: User@gmail.com"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
+        {/* Senha */}
+        <Text style={styles.label}>
+          Senha:
+          <Feather name="edit" size={15} color="#48742C" style={styles.icon} />
+        </Text>
+        <TextInput
+          style={styles.input}
+          value={senha}
+          onChangeText={setSenha}
+          secureTextEntry
+          placeholder="Digite sua nova senha"
+        />
 
-      {/* Senha */}
-      <Text style={styles.label}>Senha:<Feather name="edit" size={15} color="#48742C" style={{
-                    textShadowColor: 'rgba(133, 133, 133, 0.75)',
-                    textShadowOffset: { width: 1, height: 1 },
-                    textShadowRadius: 1,
-                    marginLeft: 6
-                }}  /></Text>
-      <TextInput
-        style={styles.input}
-        secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
-      />
+        {/* Endereço */}
+        <Text style={styles.label}>Endereço:</Text>
+        <TextInput
+          style={styles.input}
+          value={bairro}
+          onChangeText={setBairro}
+          placeholder="Bairro"
+        />
+        <TextInput
+          style={styles.input}
+          value={rua}
+          onChangeText={setRua}
+          placeholder="Rua"
+        />
+        <TextInput
+          style={styles.input}
+          value={numero}
+          onChangeText={setNumero}
+          placeholder="Número"
+          keyboardType="numeric"
+        />
 
-      {/* Endereço */}
-      <Text style={styles.label}>Endereço:<Feather name="edit" size={15} color="#48742C" style={{
-                    textShadowColor: 'rgba(133, 133, 133, 0.75)',
-                    textShadowOffset: { width: 1, height: 1 },
-                    textShadowRadius: 1,
-                    marginLeft: 6
-                }}  /></Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Altere o seu endereço"
-        value={endereco}
-        onChangeText={setEndereco}
-      />
+        {/* Pagamento */}
+        <Text style={styles.label}>Pagamento:</Text>
+        <View style={styles.selectBox}>
+          <Picker selectedValue={pagamento} onValueChange={setPagamento}>
+            <Picker.Item label="Débito" value="Débito" />
+            <Picker.Item label="Crédito" value="Crédito" />
+            <Picker.Item label="Pix" value="Pix" />
+          </Picker>
+        </View>
 
-      {/* Pagamento */}
-      <Text style={styles.label}>Pagamento:</Text>
-      <View style={styles.selectBox}>
-        <Picker selectedValue={pagamento} onValueChange={setPagamento}>
-          <Picker.Item label="Débito" value="Débito" />
-          <Picker.Item label="Crédito" value="Crédito" />
-          <Picker.Item label="Pix" value="Pix" />
-        </Picker>
+        {/* Botões */}
+        <View style={styles.buttons}>
+          <TouchableOpacity style={[styles.btn, styles.exit]} onPress={handleLogout}>
+            <Text style={styles.btnText}>
+              Sair <Ionicons name="exit-outline" size={15} color="#F1F1F1" />
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.btn, styles.save]} onPress={handleSalvar}>
+            <Text style={styles.btnTextSalvar}>
+              Salvar <Ionicons name="refresh-circle-outline" size={15} color="#8F2929" />
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.btn, styles.delete]} onPress={handleExcluir}>
+            <Text style={styles.btnText}>
+              Excluir <Ionicons name="trash" size={15} color="#FFFFFF" />
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      {/* Botões */}
-      <View style={styles.buttons}>
-        <TouchableOpacity style={[styles.btn, styles.exit]}>
-          <Text style={styles.btnText}>Sair<Ionicons name="exit-outline" size={15} color="#F1F1F1" /></Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.btn, styles.save]} onPress={handleSalvar}>
-          <Text style={styles.btnTextSalvar}>Salvar Alteração<Ionicons name="refresh-circle-outline" size={15} color="#8F2929" /></Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.btn, styles.delete]} onPress={handleExcluir}>
-        <View style={styles.btnContent}>
-          <Text style={styles.btnText}>Excluir<Ionicons name="trash" size={15} color="#FFFFFF" /></Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    </View>
-
     </ScrollView>
   );
 }
 
+
 const styles = StyleSheet.create({
-
-    tela: {
-        flex: 1,
-        backgroundColor:"#FFFFFF"
-
-    },
-
+  tela: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
   container: {
     flex: 1,
     padding: 20,
-    marginBottom: 130
-  
+    marginBottom: 130,
   },
   hello: {
     fontSize: 19,
@@ -169,13 +250,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 5,
   },
+  icon: {
+    textShadowColor: "rgba(133, 133, 133, 0.75)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
+    marginLeft: 6,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
     padding: 7,
     marginTop: 5,
-    height: 40
+    height: 40,
   },
   selectBox: {
     borderWidth: 1,
@@ -190,18 +277,11 @@ const styles = StyleSheet.create({
   },
   btn: {
     padding: 12,
-    borderRadius: 10, 
-     display: "flex",
-    alignItems: "center", 
-    gap: 2,
-    fontSize: 10,
-   
-   
+    borderRadius: 10,
+    alignItems: "center",
   },
   exit: {
     backgroundColor: "#B5A36E",
-     
-    
   },
   save: {
     backgroundColor: "#D9D9D9",
@@ -212,14 +292,9 @@ const styles = StyleSheet.create({
   btnText: {
     color: "#fff",
     fontWeight: "bold",
-    
   },
-
-  btnTextSalvar:{
+  btnTextSalvar: {
     color: "#8F2929",
     fontWeight: "bold",
   },
-
-  // 👇 esse é o que faltava
- 
-}); 
+});
