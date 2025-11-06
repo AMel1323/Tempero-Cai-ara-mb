@@ -7,46 +7,43 @@ import { Ionicons, Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useAuthStore } from '../stores/useAuthStore'
+
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
-  // Função para fazer login
+
+  const { login } = useAuthStore()
+
   const handleLogin = async () => {
-    if (!email || !pass) {
-      Alert.alert("Atenção", "Preencha todos os campos!");
-      return;
-    }
-
-    try {
-      const response = await fetch("http://localhost:3333/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, pass }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        Alert.alert("Erro", data.error || "Falha no login");
-        return;
+      const data = {
+          email,
+          pass
       }
 
-      // Login bem-sucedido → salva no AsyncStorage
-      await AsyncStorage.setItem("logado", "true");
-      await AsyncStorage.setItem("user", JSON.stringify(data.user));
+      const response = await fetch("http://localhost:3333/auth/login", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+      })
 
-      Alert.alert("Sucesso", "Login realizado com sucesso!");
-
-      // Redireciona para a página inicial
-      router.replace("/home");
-    } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      Alert.alert("Erro", "Não foi possível conectar ao servidor.");
-    }
-  };
+      if(response.ok){
+          const userLogged = await response.json()
+          console.log("Logado com sucesso!", userLogged)
+          login(userLogged)
+          await AsyncStorage.setItem('userLogged', JSON.stringify(userLogged))
+          router.replace('/home')
+      } else {
+          const { message } = await response.json()
+          console.log("Erro ao logar!", message)
+          Alert.alert("Erro ao Entrar", message || "Não foi possível fazer o login.")
+      }
+  }
 
   return (
     <View style={styles.container}>
