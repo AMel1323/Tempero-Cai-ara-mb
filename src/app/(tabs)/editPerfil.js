@@ -5,8 +5,9 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Picker,
   Alert,
+  Platform,
+  Picker
 } from "react-native";
 import { ScrollView } from "react-native-web";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,10 +18,12 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+
 export default function EditProfile() {
   const router = useRouter();
 
   const [userId, setUserId] = useState(null);
+  const [token, setToken] = useState("");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -29,51 +32,78 @@ export default function EditProfile() {
   const [numero, setNumero] = useState("");
   const [pagamento, setPagamento] = useState("Débito");
 
-  // usuário logado
+const API_URL = "http://localhost:3333";
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await AsyncStorage.getItem("user");
-        if (!userData) return;
-        const parsed = JSON.parse(userData);
-        setUserId(parsed.id);
+        const raw = await AsyncStorage.getItem("userLogged");
+        if (!raw) return;
 
-        // Buscar dados atuais do banco
-        const response = await fetch(`http://localhost:3333/user/${parsed.id}`);
+        const parsed = JSON.parse(raw);
+        const id = parsed.profile.id;
+        const authToken = parsed.token;
+
+        setUserId(id);
+        setToken(authToken);
+
+        const response = await fetch(`${API_URL}/user/${id}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
         if (!response.ok) throw new Error("Erro ao carregar usuário");
         const data = await response.json();
 
         setNome(data.name || "");
         setEmail(data.email || "");
-        setSenha(data.pass || "");
         setBairro(data.bairro || "");
         setRua(data.rua || "");
         setNumero(data.numero || "");
+        setPagamento(data.pagamento || "Débito");
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
         Alert.alert("Erro", "Não foi possível carregar seus dados.");
       }
     };
+
     fetchUserData();
   }, []);
 
-  // Atualizar usuário
   const handleSalvar = async () => {
     try {
-      const response = await fetch(`http://localhost:3333/user/${userId}`, {
+      const response = await fetch(`${API_URL}/user/${userId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           name: nome,
           email,
-          pass: senha,
+          pass: senha || undefined,
           bairro,
           rua,
           numero,
+          pagamento,
         }),
       });
 
       if (!response.ok) throw new Error("Erro ao atualizar usuário");
+
+      const updated = await response.json();
+
+      await AsyncStorage.setItem("userLogged", JSON.stringify({
+        tipoUser: "user",
+        profile: {
+          id: updated.id,
+          name: updated.name,
+          email: updated.email,
+        },
+        token,
+      }));
+
       Alert.alert("Sucesso", "Dados atualizados com sucesso!");
     } catch (error) {
       console.error("Erro ao salvar:", error);
@@ -81,33 +111,37 @@ export default function EditProfile() {
     }
   };
 
-  // Excluir usuário
-  const handleExcluir = async () => {
-    Alert.alert("Confirmação", "Tem certeza que deseja excluir sua conta?", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Excluir",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await fetch(`http://localhost:3333/user/${userId}`, {
-              method: "DELETE",
-            });
-            await AsyncStorage.removeItem("user");
-            router.replace("/login");
-          } catch (error) {
-            console.error("Erro ao excluir:", error);
-            Alert.alert("Erro", "Não foi possível excluir sua conta.");
-          }
-        },
-      },
-    ]);
-  };
+const handleExcluir = async () => {
+  const confirmar = window.confirm("Tem certeza que deseja excluir sua conta?");
+  if (!confirmar) return;
 
-  // Logout
+  try {
+    const response = await fetch(`${API_URL}/user/${userId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Erro ao excluir:", errorData);
+      alert(errorData.error || "Não foi possível excluir sua conta.");
+      return;
+    }
+
+    await AsyncStorage.removeItem("userLogged");
+    alert("Conta excluída com sucesso!");
+    router.replace("/login");
+  } catch (error) {
+    console.error("Erro ao excluir:", error);
+    alert("Erro ao excluir sua conta.");
+  }
+};
+
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("user");
+      await AsyncStorage.removeItem("userLogged");
       router.replace("/login");
     } catch (error) {
       console.log("Erro ao fazer logout:", error);
@@ -117,7 +151,6 @@ export default function EditProfile() {
   return (
     <ScrollView style={styles.tela}>
       <Topo />
-
       <View style={styles.container}>
         <Text style={styles.hello}>
           Olá, {nome || "Usuário"}{" "}
@@ -125,67 +158,26 @@ export default function EditProfile() {
         </Text>
         <Text style={styles.title}>Alterações:</Text>
 
-        {/* Nome */}
-        <Text style={styles.label}>
-          Nome:
-          <Feather name="edit" size={15} color="#48742C" style={styles.icon} />
-        </Text>
-        <TextInput
-          style={styles.input}
-          value={nome}
-          onChangeText={setNome}
-          placeholder="Digite o seu nome"
-        />
+        <Text style={styles.label}>Nome:<Feather name="edit" size={15} color="#48742C" style={styles.icon} /></Text>
+        <TextInput style={styles.input} value={nome} onChangeText={setNome} />
 
-        {/* Email */}
-        <Text style={styles.label}>
-          E-mail:
-          <Feather name="edit" size={15} color="#48742C" style={styles.icon} />
-        </Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          placeholder="Digite seu e-mail"
-        />
+        <Text style={styles.label}>E-mail:<Feather name="edit" size={15} color="#48742C" style={styles.icon} /></Text>
+        <TextInput style={styles.input} value={email} onChangeText={setEmail} />
 
-        {/* Senha */}
-        <Text style={styles.label}>
-          Senha:
-          <Feather name="edit" size={15} color="#48742C" style={styles.icon} />
-        </Text>
+        <Text style={styles.label}>Nova senha:<Feather name="edit" size={15} color="#48742C" style={styles.icon} /></Text>
         <TextInput
           style={styles.input}
           value={senha}
           onChangeText={setSenha}
           secureTextEntry
-          placeholder="Digite sua nova senha"
+          placeholder="Digite a nova senha..."
         />
 
-        {/* Endereço */}
-        <Text style={styles.label}>Endereço:</Text>
-        <TextInput
-          style={styles.input}
-          value={bairro}
-          onChangeText={setBairro}
-          placeholder="Bairro"
-        />
-        <TextInput
-          style={styles.input}
-          value={rua}
-          onChangeText={setRua}
-          placeholder="Rua"
-        />
-        <TextInput
-          style={styles.input}
-          value={numero}
-          onChangeText={setNumero}
-          placeholder="Número"
-          keyboardType="numeric"
-        />
+        <Text style={styles.label}>Endereço:<Feather name="edit" size={15} color="#48742C" style={styles.icon} /></Text>
+        <TextInput style={styles.input} value={bairro} onChangeText={setBairro} placeholder="Bairro" />
+        <TextInput style={styles.input} value={rua} onChangeText={setRua} placeholder="Rua" />
+        <TextInput style={styles.input} value={numero} onChangeText={setNumero} placeholder="Número" />
 
-        {/* Pagamento */}
         <Text style={styles.label}>Pagamento:</Text>
         <View style={styles.selectBox}>
           <Picker selectedValue={pagamento} onValueChange={setPagamento}>
@@ -195,7 +187,6 @@ export default function EditProfile() {
           </Picker>
         </View>
 
-        {/* Botões */}
         <View style={styles.buttons}>
           <TouchableOpacity style={[styles.btn, styles.exit]} onPress={handleLogout}>
             <Text style={styles.btnText}>
