@@ -77,6 +77,7 @@ export default function CamaraoPage() {
 
 function CardQuiosque({ data }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   const getVisibleItems = () => {
     const visible = [];
@@ -118,7 +119,7 @@ function CardQuiosque({ data }) {
             <TouchableOpacity
               key={item.id}
               style={styles.carouselItem}
-              onPress={() => router.navigate('/modal')} 
+              onPress={() => router.push('/modal')} 
             >
               <Image source={item.img} style={styles.produtoImg} />
               <Text style={styles.produtoTitulo}>{item.title}</Text>

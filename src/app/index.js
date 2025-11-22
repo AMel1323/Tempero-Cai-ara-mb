@@ -12,9 +12,18 @@ export default function LoginScreen() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const logged = await AsyncStorage.getItem("logado");
-        if (logged === "true") {
-          router.replace("/home"); // já logado → vai direto pra home
+        const logged = await AsyncStorage.getItem("userLogged");
+        let isLogged = false;
+        if (logged) {
+          try {
+            isLogged = JSON.parse(logged);
+          } catch {
+            isLogged = logged === "true";
+          }
+        }
+        if (isLogged) {
+          router.replace("/home");
+          return;
         }
       } catch (error) {
         console.log("Erro ao verificar login:", error);
@@ -24,10 +33,10 @@ export default function LoginScreen() {
     };
 
     checkLogin();
-  }, []);
+  }, [router]);
 
   if (loading) {
-    // Tela de carregamento enquanto verifica login
+    
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#C3A31B" />

@@ -1,4 +1,5 @@
 import { Stack } from "expo-router"
+import { Modal } from "expo-router"
 
 
 export default function Layout() {
@@ -29,6 +30,7 @@ export default function Layout() {
                 name="modal"
                 options={{
                     presentation: 'modal',
+                    headerShown: false
                   }}
                   />
         </Stack>
