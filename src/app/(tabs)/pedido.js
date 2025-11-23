@@ -1,77 +1,106 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Image, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Topo from '../../components/Topo'
-
+import Topo from "../../components/Topo";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 export default function MeusPedidos() {
-  // Exemplo de estado do pedido
-  const [pedido] = useState({
-    nome: "Nome do pedido:",
-    descricao: "descrição....................................",
-    valor: 30.0,
-    status: "Pedido a caminho",
-    imagem: require("../../../assets/img/acai.png"), // substituir pela imagem real
-  });
+  const { token } = useAuthStore();
+  const [pedidos, setPedidos] = useState([]);
+
+  useEffect(() => {
+    const fetchPedidos = async () => {
+      try {
+        const res = await fetch("http://localhost:3333/api/orders/my-orders", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Erro ao buscar pedidos");
+        setPedidos(data);
+      } catch (err) {
+        console.error("Erro ao carregar pedidos:", err);
+      }
+    };
+    fetchPedidos();
+  }, [token]);
+
+  const renderPedido = ({ item }) => (
+    <View style={styles.card}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Ionicons name="ticket-outline" size={20} color="#B49721" />
+        <Text style={styles.nomePedido}>Pedido #{item.id_order}</Text>
+        <Text style={styles.valorPedido}>
+          Valor: R$
+          {item.order_has_pratos
+            .reduce((acc, p) => acc + p.pratos.preco * p.quantidade, 0)
+            .toFixed(2)}
+        </Text>
+      </View>
+
+      {/* Corpo */}
+      <View style={styles.body}>
+        <Image
+          source={{
+            uri:
+              item.order_has_pratos[0]?.pratos?.imagem ||
+              "https://via.placeholder.com/60",
+          }}
+          style={styles.imagem}
+        />
+        <View style={styles.descricao}>
+          {item.order_has_pratos.map((p) => (
+            <Text key={p.pratos_id}>
+              {p.quantidade}x {p.pratos.nome}
+            </Text>
+          ))}
+        </View>
+      </View>
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        <View style={styles.linha} />
+        <Ionicons
+          name="checkmark-circle"
+          size={18}
+          color="green"
+          style={{ marginRight: 6 }}
+        />
+        <Text style={styles.status}>{item.status || "Pedido a caminho"}</Text>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.tela}>
-         <Topo/>
-    <View style={styles.container}>
-       
-      <Text style={styles.titulo}>Meus pedidos:</Text>
-
-      <View style={styles.card}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Ionicons name="ticket-outline" size={20} color="#B49721" />
-          <Text style={styles.nomePedido}>{pedido.nome}</Text>
-
-         
-        </View>
-
-        {/* Corpo */}
-        <View style={styles.body}>
-          <Image source={pedido.imagem} style={styles.imagem} />
-          <Text style={styles.descricao}>{pedido.descricao}</Text>
-        </View>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <View style={styles.linha} />
-          <Ionicons
-            name="checkmark-circle"
-            size={18}
-            color="green"
-            style={{ marginRight: 6 }}
+      <Topo />
+      <View style={styles.container}>
+        <Text style={styles.titulo}>Meus pedidos:</Text>
+        {pedidos.length > 0 ? (
+          <FlatList
+            data={pedidos}
+            keyExtractor={(item) => item.id_order.toString()}
+            renderItem={renderPedido}
           />
-          <Text style={styles.status}>{pedido.status}</Text>
-
-           <View style={styles.valorPedido}>
-            Total do pedido:{" "}
-            <Text style={styles.valor}>R${pedido.valor},00</Text>
-          </View>
-        </View>
+        ) : (
+          <Text style={{ textAlign: "center", marginTop: 40, color: "#777" }}>
+            Você ainda não tem pedidos.
+          </Text>
+        )}
       </View>
-    </View>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
-     tela: {
-        flex: 1,
-        backgroundColor:"#fff"
-
-    },
-
-  container: {
-    padding: 16,
-    backgroundColor: "#fff",
-    flex: 1,
-    marginTop:150,
+  tela: { 
+    flex: 1, 
+    backgroundColor: "#fff" 
+  },
+  container: { 
+    padding: 16, 
+    backgroundColor: "#fff", 
+    flex: 1, marginTop: 150 
   },
   titulo: {
     fontSize: 18,
@@ -84,6 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     elevation: 3,
+    marginBottom: 12,
   },
   header: {
     flexDirection: "row",
@@ -91,34 +121,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
   },
-  nomePedido: {
-    flex: 1,
-    marginLeft: 6,
-    fontWeight: "bold",
-    fontSize: 14,
-    
+  nomePedido: { 
+    fontWeight: "bold", 
+    fontSize: 14 
   },
- 
-  body: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
+  valorPedido: { 
+    fontSize: 12, 
+    color: "#333" 
   },
-  imagem: {
-    width: 60,
-    height: 60,
-    borderRadius: 6,
-    marginRight: 10,
+  body: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    marginBottom: 8 
   },
-  descricao: {
-    flex: 1,
-    fontSize: 12,
-    color: "#444",
+  imagem: { 
+    width: 60, 
+    height: 60, 
+    borderRadius: 6, 
+    marginRight: 10 
   },
-  footer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 6,
+  descricao: { 
+    flex: 1, 
+    fontSize: 12, 
+    color: "#444"
+   },
+  footer: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    marginTop: 6 
   },
   linha: {
     position: "absolute",
@@ -128,20 +158,8 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#A52A2A",
   },
-  status: {
-    fontSize: 12,
-    color: "green",
-  },
-
-   valorPedido: {
-    fontSize: 12,
-    color: "#333",
-    textAlign:"center",
-    marginLeft:110,
-  },
-  valor: {
-    fontWeight: "bold",
-    color: "green",
-    textAlign:"center",
+  status: { 
+    fontSize: 12, 
+    color: "green" 
   },
 });

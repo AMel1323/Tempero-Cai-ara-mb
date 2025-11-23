@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useCarrinhoStore } from "../stores/useCarrinhoStore";
+import { useAuthStore } from "../stores/useAuthStore";
 
 export default function PratoModal() {
   const router = useRouter();
@@ -16,6 +18,8 @@ export default function PratoModal() {
   const [prato, setPrato] = useState(null);
   const [quiosque, setQuiosque] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const adicionarItem = useCarrinhoStore((state) => state.adicionarItem);
 
   useEffect(() => {
     async function fetchData() {
@@ -76,9 +80,19 @@ export default function PratoModal() {
           </View>
         </View>
       </ScrollView>
+      
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.addButton}>
+          <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => {
+            adicionarItem(prato); // chama store
+            router.back(); // fecha modal
+            console.log("Token atual:", useAuthStore.getState().token);
+            
+          }}
+        >
+          
           <Text style={styles.addButtonText}>Adicionar ao Carrinho</Text>
         </TouchableOpacity>
       </View>

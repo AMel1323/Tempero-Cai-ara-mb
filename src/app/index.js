@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuthStore } from "../stores/useAuthStore";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -11,27 +12,24 @@ export default function LoginScreen() {
 
   useEffect(() => {
     const checkLogin = async () => {
-      try {
-        const logged = await AsyncStorage.getItem("userLogged");
-        let isLogged = false;
-        if (logged) {
-          try {
-            isLogged = JSON.parse(logged);
-          } catch {
-            isLogged = logged === "true";
-          }
-        }
-        if (isLogged) {
-          router.replace("/home");
-          return;
-        }
-      } catch (error) {
-        console.log("Erro ao verificar login:", error);
-      } finally {
-        setLoading(false);
+    try {
+      const logged = await AsyncStorage.getItem("userLogged");
+      if (logged) {
+        const parsed = JSON.parse(logged);
+        if (parsed?.token) {
+        useAuthStore.getState().login({
+          profile: parsed.profile,
+          token: parsed.token,
+        });
+        router.replace("/home");
       }
-    };
-
+      }
+    } catch (error) {
+      console.log("Erro ao verificar login:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
     checkLogin();
   }, [router]);
 

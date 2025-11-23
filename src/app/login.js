@@ -35,8 +35,13 @@ export default function Login() {
       if(response.ok){
           const userLogged = await response.json()
           console.log("Logado com sucesso!", userLogged)
-          login(userLogged)
-          await AsyncStorage.setItem('userLogged', JSON.stringify(userLogged))
+          // Normaliza possíveis formatos de resposta do backend
+          const token = userLogged.token || userLogged.access_token || userLogged.token_access || userLogged.tokenJwt;
+          const profile = userLogged.user || userLogged.profile || userLogged;
+
+          // Garante que enviamos o objeto esperado ao store: { profile, token }
+          login({ profile, token });
+          await AsyncStorage.setItem('userLogged', JSON.stringify({ profile, token }))
           router.replace('/home')
       } else {
           const { message } = await response.json()

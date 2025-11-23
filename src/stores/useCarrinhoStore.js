@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore"; // ajuste o caminho conforme sua estrutura
 
 export const useCarrinhoStore = create((set, get) => ({
   itens: [],
@@ -7,7 +8,7 @@ export const useCarrinhoStore = create((set, get) => ({
   // Carregar carrinho do backend
   carregarCarrinho: async () => {
     try {
-      const token = get().token || null; // se você guarda token no authStore
+      const token = useAuthStore.getState().token; // pega direto do auth
       if (!token) return;
 
       const resCart = await fetch("http://localhost:3333/api/cart/me", {
@@ -44,7 +45,7 @@ export const useCarrinhoStore = create((set, get) => ({
   // Adicionar item
   adicionarItem: async (produto) => {
     const { cartId } = get();
-    const token = get().token || null;
+    const token = useAuthStore.getState().token; // pega direto do auth
     if (!token) {
       alert("Você precisa estar logado para adicionar produtos ao carrinho.");
       return;
@@ -66,7 +67,7 @@ export const useCarrinhoStore = create((set, get) => ({
   // Remover item
   removerItem: async (id) => {
     const { cartId } = get();
-    const token = get().token || null;
+    const token = useAuthStore.getState().token;
     if (!token || !cartId) return;
 
     await fetch(`http://localhost:3333/api/cart/${cartId}/items/${id}`, {
@@ -82,7 +83,7 @@ export const useCarrinhoStore = create((set, get) => ({
   // Atualizar quantidade
   atualizarQuantidade: async (id, qtd) => {
     const { cartId } = get();
-    const token = get().token || null;
+    const token = useAuthStore.getState().token;
     if (!token || !cartId) return;
 
     if (qtd <= 0) return get().removerItem(id);
@@ -105,8 +106,4 @@ export const useCarrinhoStore = create((set, get) => ({
 
   // Limpar carrinho
   limparCarrinho: () => set({ itens: [], cartId: null }),
-
-  // Token pode vir do authStore, mas se quiser pode guardar aqui também
-  token: null,
-  setToken: (token) => set({ token }),
 }));

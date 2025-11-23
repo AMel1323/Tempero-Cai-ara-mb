@@ -1,89 +1,103 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Topo from "../../components/Topo";
+import { useCarrinhoStore } from "../../stores/useCarrinhoStore";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useRouter } from "expo-router";
 
 export default function Carrinho() {
-  const [quantidade, setQuantidade] = useState(1);
+  const router = useRouter();
+  const { itens, carregarCarrinho, removerItem, atualizarQuantidade, cartId, limparCarrinho } = useCarrinhoStore();
+  const { token } = useAuthStore();
 
-  const precoUnitario = 30.0;
-  const subtotal = precoUnitario * quantidade;
+  useEffect(() => {
+    carregarCarrinho();
+  }, []);
 
-  const aumentar = () => setQuantidade(quantidade + 1);
-  const diminuir = () => {
-    if (quantidade > 1) setQuantidade(quantidade - 1);
-  };
+  const subtotal = itens.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
 
-  const removerItem = () => {
-    console.log("Item removido do carrinho");
-    setQuantidade(0);
-  };
+const finalizarPedido = async () => {
+  if (!token || !cartId) {
+    Alert.alert("Erro", "Você precisa estar logada e ter um carrinho válido.");
+    return;
+  }
 
-  const finalizarPedido = () => {
-    console.log("Pedido enviado:", {
-      produto: "Açaí no copo - 400ml",
-      quantidade,
-      subtotal,
+  try {
+    const response = await fetch(`http://localhost:3333/api/orders/from-cart/${cartId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-  };
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Erro ao criar pedido");
+    }
+
+    Alert.alert("Sucesso", "Pedido criado com sucesso!");
+    limparCarrinho();
+    router.replace("/pedido"); 
+  } catch (err) {
+    Alert.alert("Erro", err.message);
+  }
+};
 
   return (
-    <View style={styles.tela}>
-      <Topo />
-      <View style={styles.container}>
-        <Text style={styles.titulo}>CARRINHO</Text>
+    <ScrollView style={styles.tela}>
+      <View style={styles.tela}>
+        <Topo />
+        <View style={styles.container}>
+          <Text style={styles.titulo}>CARRINHO</Text>
 
-        {quantidade > 0 ? (
-          <View style={styles.card}>
-            {/* Imagem e infos */}
-            <Image
-              source={require("../../../assets/img/acai.png")}
-              style={styles.imagem}
-            />
-            <View style={styles.info}>
-              <Text style={styles.nome}>Açaí no copo - 400ml</Text>
-              <Text style={styles.preco}>R$ {precoUnitario.toFixed(2)}</Text>
+          {itens.length > 0 ? (
+            itens.map((item) => (
+              <View key={item.id} style={styles.card}>
+                <Image source={{ uri: item.imagem }} style={styles.imagem} />
+                <View style={styles.info}>
+                  <Text style={styles.nome}>{item.nome}</Text>
+                  <Text style={styles.preco}>R$ {item.preco.toFixed(2)}</Text>
 
-              {/* Ações */}
-              <View style={styles.acoes}>
-                <TouchableOpacity onPress={removerItem} style={styles.botaoIcone}>
-                  <Ionicons name="trash-outline" size={18} color="#fff" />
-                </TouchableOpacity>
+                  <View style={styles.acoes}>
+                    <TouchableOpacity onPress={() => removerItem(item.id)} style={styles.botaoIcone}>
+                      <Ionicons name="trash-outline" size={18} color="#fff" />
+                    </TouchableOpacity>
 
-                <TouchableOpacity onPress={diminuir} style={styles.botaoQtd}>
-                  <Text style={styles.textoQtd}>-</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity onPress={() => atualizarQuantidade(item.id, item.quantidade - 1)} style={styles.botaoQtd}>
+                      <Text style={styles.textoQtd}>-</Text>
+                    </TouchableOpacity>
 
-                <Text style={styles.qtd}>{quantidade}</Text>
+                    <Text style={styles.qtd}>{item.quantidade}</Text>
 
-                <TouchableOpacity onPress={aumentar} style={styles.botaoQtd}>
-                  <Text style={styles.textoQtd}>+</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity onPress={() => atualizarQuantidade(item.id, item.quantidade + 1)} style={styles.botaoQtd}>
+                      <Text style={styles.textoQtd}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
+            ))
+          ) : (
+            <Text style={{ textAlign: "center", marginTop: 40, color: "#777" }}>Carrinho vazio</Text>
+          )}
+
+          <View style={styles.subtotalContainer}>
+            <Text style={styles.subtotalLabel}>Subtotal</Text>
+            <Text style={styles.subtotalValor}>R$ {subtotal.toFixed(2)}</Text>
           </View>
-        ) : (
-          <Text style={{ textAlign: "center", marginTop: 40, color: "#777" }}>
-            Carrinho vazio
-          </Text>
-        )}
 
-        {/* Subtotal */}
-        <View style={styles.subtotalContainer}>
-          <Text style={styles.subtotalLabel}>Subtotal</Text>
-          <Text style={styles.subtotalValor}>R$ {subtotal.toFixed(2)}</Text>
+          {/* 👉 Botão de finalizar pedido */}
+          <TouchableOpacity
+            style={styles.botaoFinalizar}
+            disabled={itens.length === 0}
+            onPress={finalizarPedido}
+          >
+            <Text style={styles.textoFinalizar}>Finalizar</Text>
+          </TouchableOpacity>
         </View>
-
-        {/* Botão Finalizar */}
-        <TouchableOpacity
-          style={styles.botaoFinalizar}
-          onPress={finalizarPedido}
-          disabled={quantidade === 0}
-        >
-          <Text style={styles.textoFinalizar}>Finalizar</Text>
-        </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -94,7 +108,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
-    marginTop: 150, // pequena margem pro topo
+    marginTop: 150,
   },
   titulo: {
     fontSize: 18,
@@ -163,7 +177,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#ccc",
     paddingVertical: 12,
-    marginTop: 120,
+    marginTop: 10,
   },
   subtotalLabel: {
     fontSize: 16,
@@ -181,6 +195,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
     marginTop: 10,
+    marginBottom: 95,
   },
   textoFinalizar: {
     color: "#fff",
