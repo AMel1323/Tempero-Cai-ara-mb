@@ -43,7 +43,7 @@ export default function CategoriaCarrossel() {
           contentContainerStyle={styles.scrollContent}
         >
           {categories.map((item) => (
-            <TouchableOpacity key={item.id} onPress={() => router.navigate('/camaraopage')}>
+            <TouchableOpacity key={item.id} onPress={() => router.push(`/categoria/${item.name.toLowerCase()}`)}>
               <View style={styles.card}>
                 <View style={styles.cardContent}>
                   <Image

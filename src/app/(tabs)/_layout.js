@@ -103,7 +103,7 @@ export default function RootLayout() {
       />
 
       <Tabs.Screen
-        name="camaraopage"
+        name="categoria/[nome]"
         options={{
           href: null, // oculta da TabBar
         }}
