@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#ccc",
     paddingVertical: 12,
-    marginTop: 10,
+    marginTop: 100,
   },
   subtotalLabel: {
     fontSize: 16,

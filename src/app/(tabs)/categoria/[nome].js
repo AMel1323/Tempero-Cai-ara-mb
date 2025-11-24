@@ -13,19 +13,29 @@ import Topo from "../../../components/Topo";
 
 const screenWidth = Dimensions.get("window").width;
 
+// Função utilitária para normalizar slug
+function normalizeSlug(str) {
+  if (!str) return "";
+  return str
+    .normalize("NFD") 
+    .replace(/[\u0300-\u036f]/g, "") 
+    .toLowerCase()
+    .replace(/\s+/g, "-"); 
+}
+
 // Mapa de banners por categoria
 const banners = {
   camarao: require("../../../../assets/img/bannercamarao.png"),
-  acai: require("../../../../assets/img/bannercamarao.png"),
-  bebidas: require("../../../../assets/img/bannercamarao.png"),
-  peixes: require("../../../../assets/img/bannercamarao.png"),
-  porcoes: require("../../../../assets/img/bannercamarao.png"),
-  sorvetes: require("../../../../assets/img/bannercamarao.png"),
-  "pratos-feitos": require("../../../../assets/img/bannercamarao.png"),
+  acai: require("../../../../assets/img/banneracai.png"),
+  bebidas: require("../../../../assets/img/bannerbebidas.png"),
+  peixes: require("../../../../assets/img/bannerpeixe.png"),
+  porcoes: require("../../../../assets/img/bannerporcao.png"),
+  sorvetes: require("../../../../assets/img/bannersorvete.png"),
+  "pratos-feitos": require("../../../../assets/img/bannerpratofeito.png"),
 };
 
 export default function CategoriaPage() {
-  const { nome } = useLocalSearchParams(); 
+  const { nome } = useLocalSearchParams();
   const router = useRouter();
   const [quiosques, setQuiosques] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,16 +53,13 @@ export default function CategoriaPage() {
             );
             const pratos = await resPratos.json();
 
-            // Debug para ver o que vem da API
-            console.log("Pratos recebidos:", pratos);
-
             // Filtra apenas os pratos da categoria atual
-              const filtrados = pratos.filter((p) => {
-                if (!p.categoria) return false;
-                const cat = p.categoria.toLowerCase().replace(/\s+/g, "-");
-                const slug = nome.toLowerCase().replace(/\s+/g, "-");
-                return cat === slug || cat.replace(/s$/, "") === slug.replace(/s$/, "");
-              });
+            const filtrados = pratos.filter((p) => {
+              if (!p.categoria) return false;
+              const cat = normalizeSlug(p.categoria);
+              const slug = normalizeSlug(nome);
+              return cat === slug || cat.replace(/s$/, "") === slug.replace(/s$/, "");
+            });
 
             return { ...est, produtos: filtrados };
           })
@@ -69,12 +76,15 @@ export default function CategoriaPage() {
     fetchData();
   }, [nome]);
 
+  const slug = normalizeSlug(nome);
+
   return (
     <ScrollView style={styles.container}>
+      <Topo />
       {/* Banner dinâmico */}
       <View style={styles.banner}>
         <Image
-          source={banners[nome] || banners["pratos-feitos"]}
+          source={banners[slug] || banners["pratos-feitos"]}
           style={styles.bannerImage}
         />
         <Text style={styles.bannerText}>
@@ -114,7 +124,6 @@ function CardQuiosque({ data }) {
 
   return (
     <View style={styles.quiosque}>
-      <Topo />
       {/* Header Quiosque */}
       <View style={styles.header}>
         <Image
@@ -141,7 +150,9 @@ function CardQuiosque({ data }) {
             <TouchableOpacity
               key={item.id}
               style={styles.carouselItem}
-              onPress={() => router.push(`/modal?id=${item.id}&quiosqueId=${data.id}`)}
+              onPress={() =>
+                router.push(`/modal?id=${item.id}&quiosqueId=${data.id}`)
+              }
             >
               <Image
                 source={{ uri: item.imagem || "https://via.placeholder.com/80" }}

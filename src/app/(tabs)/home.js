@@ -36,16 +36,14 @@ export default function Login() {
 
                 <View style={styles.welcome}>
                 
-                <TouchableOpacity
-                                 title='Camarao'
-                                 onPress={() => router.navigate('/camaraopage')}>
+               
                 <View style={styles.bannerPublicitario}>
                     <Image
                         style={styles.image_publicitario}
                         source={require('../../../assets/img/bannerwelcome.png')}
                     />
                 </View>
-                </TouchableOpacity>
+                
 
 
                 </View>
@@ -62,16 +60,15 @@ export default function Login() {
                 </View>
 
 
-                <TouchableOpacity
-                                 title='Camarao'
-                                 onPress={() => router.navigate('/camaraopage')}>
+             
+                     
                 <View style={styles.bannerPublicitario}>
                     <Image
                         style={styles.image_publicitario}
                         source={require('../../../assets/img/pequeno_banner.png')}
                     />
                 </View>
-                </TouchableOpacity>
+              
 
 
                 <View>
